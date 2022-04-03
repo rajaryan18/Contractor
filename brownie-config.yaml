@@ -1,0 +1,16 @@
+dependencies:
+  - smartcontractkit/chainlink-brownie-contracts@0.2.1
+compiler:
+  solc:
+    remappings: 
+      - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.2.1'
+networks:
+  development:
+    verify: False
+  ganache:
+    verify: False
+  kovan:
+    verify: True
+dotenv: .env
+wallets: 
+  from_key: ${PRIVATE_KEY}
