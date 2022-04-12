@@ -1,9 +1,9 @@
 dependencies:
-  - smartcontractkit/chainlink-brownie-contracts@0.2.1
+  - smartcontractkit/chainlink-brownie-contracts@0.4.0
 compiler:
   solc:
     remappings: 
-      - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.2.1'
+      - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.4.0'
 networks:
   development:
     verify: False

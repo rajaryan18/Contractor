@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8;
+pragma solidity ^0.8.0;
 
-import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract Contract is VRFConsumerBase {
     uint256 public serial;
@@ -10,35 +10,25 @@ contract Contract is VRFConsumerBase {
     address public to; // address of client
     string public contract_detail;
     string public completion_date;
-    uint256 public penalty;
-    string public location;
     uint256 public phone;
     string public email;
-    uint256 public total_amount;
-    uint256 public installments; // default to 0
-    string public comment;
     enum CONTRACT_STATE { STARTING, MIDWAY, FINISHING }
     CONTRACT_STATE public contract_state;
 
-    constructor (address _vrfCoordinator, address _link, uint256 _fee, bytes32 keyhash, string memory _projectName, address _to, string memory _contractdetail, string memory _completeDate, uint256 _penalty, string memory _location, uint256 _phone, string memory _email, uint256 _totalAmount, uint256 _installment, string memory _comment, string memory _gst) public VRFConsumerBase(_vrfCoordinator, _link) {
+    event RequestedRandomness(bytes32 requestId);
+
+    constructor (address _vrfCoordinator, address _link, uint256 _fee, bytes32 _keyhash, string memory _projectName, address _to, string memory _contractdetail, string memory _completeDate, uint256 _phone, string memory _email, string memory _gst) public VRFConsumerBase(_vrfCoordinator, _link) {
         project_name = _projectName;
         to = _to;
         contract_detail = _contractdetail;
         completion_date = _completeDate;
         client_GST = _gst;
-        penalty = _penalty;
-        location = _location;
         phone = _phone;
         email = _email;
-        total_amount = _totalAmount;
-        installments = _installment;
-        comment = _comment;
         contract_state = CONTRACT_STATE.STARTING;
         bytes32 requestId = requestRandomness(_keyhash, _fee);
         emit RequestedRandomness(requestId);
     }
-
-    event RequestedRandomness(bytes32 requestId);
 
     function incrementContractState() public {
         require(contract_state != CONTRACT_STATE.FINISHING, "The contract has been completed");
@@ -66,7 +56,7 @@ contract Contract is VRFConsumerBase {
         serial = _randomness % 10000000;
     }
 
-    function contractState() external view returns(string) {
+    function contractState() external view returns(string memory) {
         if(contract_state == CONTRACT_STATE.STARTING) {
             return "STARTING";
         } else if(contract_state == CONTRACT_STATE.MIDWAY) {
@@ -77,10 +67,10 @@ contract Contract is VRFConsumerBase {
     }
 
     function fullContract() external view returns (
-        uint256, string, string, address, string, string, uint256, string, uint256, string, uint256, uint256, string
+        uint256, string memory, string memory, address, string memory, string memory, uint256, string memory
     ) {
         return (
-            serial, project_name, client_GST, to, contract_detail, completion_date, penalty, location, phone, email, total_amount, installments, comment
+            serial, project_name, client_GST, to, contract_detail, completion_date, phone, email
         );
     }
 }
