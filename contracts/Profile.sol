@@ -2,7 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-contract Profile {
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract Profile is Ownable {
     string public name;
     string public GST;
     uint256 public phone;
@@ -21,11 +23,21 @@ contract Profile {
         contractorAddress = _address;
     }
 
-    function addContract(uint256 _serial) public {
+    function addContract(uint256 _serial) public onlyOwner {
         for(uint256 i=0;i<length;i++) {
             if(contracts[i] == _serial) return;
         }
 
         contracts.push(_serial);
+    }
+
+    function getInfo() public view returns(string memory, string memory, uint256, string memory, string memory, address) {
+        return (
+            name, GST, phone, email, sector, contractorAddress
+        );
+    }
+
+    function getContracts() public view returns(uint256[] memory) {
+        return contracts;
     }
 }
