@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
-contract Contract is VRFConsumerBase {
+contract Contracts is VRFConsumerBase {
     uint256 public serial;
     string public project_name;
     string public client_GST;

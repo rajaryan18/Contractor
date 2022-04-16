@@ -3,8 +3,8 @@ from brownie import (
     accounts,
     config,
     MockV3Aggregator,
-    MockDAI,
-    MockWETH,
+    VRFCoordinatorMock,
+    LinkToken,
     Contract,
     web3
 )
@@ -22,8 +22,8 @@ BLOCK_CONFIRMATIONS_FOR_VERIFICATION = 6
 contract_to_mock = {
     "eth_usd_price_feed": MockV3Aggregator,
     "dai_usd_price_feed": MockV3Aggregator,
-    "fau_token": MockDAI,
-    "weth_token": MockWETH 
+    "vrf_coordinator": VRFCoordinatorMock,
+    "link_token": LinkToken
 }
 
 DECIMALS = 18
@@ -78,20 +78,6 @@ def get_contract(contract_name):
     return contract
 
 
-def fund_with_link(
-    contract_address, account=None, link_token=None, amount=1000000000000000000
-):
-    account = account if account else get_account()
-    link_token = link_token if link_token else get_contract("link_token")
-    ### Keep this line to show how it could be done without deploying a mock
-    # tx = interface.LinkTokenInterface(link_token.address).transfer(
-    #     contract_address, amount, {"from": account}
-    # )
-    tx = link_token.transfer(contract_address, amount, {"from": account})
-    print("Funded {}".format(contract_address))
-    return tx
-
-
 def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
     """
     Use this script if you want to deploy mocks to a testnet
@@ -104,12 +90,6 @@ def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
         decimals, initial_value, {"from": account}
     )
     print(f"Deployed to {mock_price_feed.address}")
-    print("Deploying mock DAI")
-    dai_token = MockDAI.deploy({'from': account})
-    print(f"Deployed to {dai_token.address}")
-    print("Deploying Mock WETH")
-    weth_token = MockWETH.deploy({'from': account})
-    print(f"Deployed to {weth_token.address}")
     print("Mocks Deployed!")
 
 
