@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >=0.6.0 <0.9.0;
 
-import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
-
-contract Contracts is VRFConsumerBase {
+contract Contracts {
     uint256 public serial;
     string public project_name;
     string public client_GST;
@@ -15,9 +13,7 @@ contract Contracts is VRFConsumerBase {
     enum CONTRACT_STATE { STARTING, MIDWAY, FINISHING }
     CONTRACT_STATE public contract_state;
 
-    event RequestedRandomness(bytes32 requestId);
-
-    constructor (address _vrfCoordinator, address _link, uint256 _fee, bytes32 _keyhash, string memory _projectName, address _to, string memory _contractdetail, string memory _completeDate, uint256 _phone, string memory _email, string memory _gst) public VRFConsumerBase(_vrfCoordinator, _link) {
+    constructor (uint256 _serial, string memory _projectName, address _to, string memory _contractdetail, string memory _completeDate, uint256 _phone, string memory _email, string memory _gst) public {
         project_name = _projectName;
         to = _to;
         contract_detail = _contractdetail;
@@ -25,9 +21,8 @@ contract Contracts is VRFConsumerBase {
         client_GST = _gst;
         phone = _phone;
         email = _email;
+        serial = _serial;
         contract_state = CONTRACT_STATE.STARTING;
-        bytes32 requestId = requestRandomness(_keyhash, _fee);
-        emit RequestedRandomness(requestId);
     }
 
     function incrementContractState() public {
@@ -50,13 +45,7 @@ contract Contracts is VRFConsumerBase {
         }
     }
 
-    function fulfillRandomness(bytes32 _requestId, uint256 _randomness) internal override {
-        require(contract_state == CONTRACT_STATE.STARTING, "You aren't in the right stage");
-        require(_randomness > 0, "random-not-found");
-        serial = _randomness % 10000000;
-    }
-
-    function contractState() external view returns(string memory) {
+    function contractState() public view returns(string memory) {
         if(contract_state == CONTRACT_STATE.STARTING) {
             return "STARTING";
         } else if(contract_state == CONTRACT_STATE.MIDWAY) {

@@ -20,6 +20,7 @@ def create_contracts():
         {'from': from_account},
         publish_source=config["networks"][network.show_active()].get("verify", False)
     )
+    print(contract)
     contract_info = contract.fullContract()
     return contract_info
 
@@ -36,18 +37,27 @@ def deploy_profile():
         {'from': from_account},
         publish_source=config["networks"][network.show_active()].get("verify", False)
     )
+    print(profile)
     return profile
 
 def getContractProfile(profile):
     print(profile.getContracts())
 
 def Increment():
+    account = get_account(index=1)
     contract = Contracts[-1]
-    contract.incrementContractState()
+    tx = contract.incrementContractState({'from': account})
+    tx.wait(1)
+    return contract
 
 def Decrement():
+    account = get_account(index=1)
     contract = Contracts[-1]
-    contract.decrementContractState()
+    tx = contract.decrementContractState({'from': account})
+    tx.wait(1)
+    return contract
+
+
 
 def main():
     profile = deploy_profile()

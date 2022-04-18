@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity >=0.6.0 <0.9.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-contract Profile is Ownable {
+contract Profile {
     string public name;
     string public GST;
     uint256 public phone;
@@ -14,7 +12,7 @@ contract Profile is Ownable {
     string public sector;
     address public contractorAddress;
 
-    constructor (string memory _name, string memory _gst, uint256 _phone, string memory _email, string memory _sector, address _address) {
+    constructor (string memory _name, string memory _gst, uint256 _phone, string memory _email, string memory _sector, address _address) public {
         name = _name;
         GST = _gst;
         phone = _phone;
@@ -23,7 +21,8 @@ contract Profile is Ownable {
         contractorAddress = _address;
     }
 
-    function addContract(uint256 _serial) public onlyOwner {
+    function addContract(uint256 _serial) public {
+        require(msg.sender == contractorAddress);
         for(uint256 i=0;i<length;i++) {
             if(contracts[i] == _serial) return;
         }
