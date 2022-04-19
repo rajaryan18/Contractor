@@ -1,15 +1,12 @@
 from brownie import network, config, Contracts, Profile
-from scripts.helpful_scripts import get_account, get_contract
+from scripts.helpful_scripts import get_account
 
 def create_contracts():
     from_account = get_account(index=1)
     to_account = get_account(index=2)
 
     contract = Contracts.deploy(
-        get_contract('vrf_coordinator').address, 
-        get_contract('link_token').address, 
-        config["networks"][network.show_active()]["fee"], 
-        config["networks"][network.show_active()]["keyhash"],
+        123,
         'Great Indian Project',
         to_account,
         'A big bridge to be built with Rs 1.2Cr',
@@ -20,9 +17,7 @@ def create_contracts():
         {'from': from_account},
         publish_source=config["networks"][network.show_active()].get("verify", False)
     )
-    print(contract)
-    contract_info = contract.fullContract()
-    return contract_info
+    return contract
 
 def deploy_profile():
     from_account = get_account(index=1)

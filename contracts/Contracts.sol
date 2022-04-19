@@ -5,7 +5,7 @@ contract Contracts {
     uint256 public serial;
     string public project_name;
     string public client_GST;
-    address public to; // address of client
+    address private to; // address of client
     string public contract_detail;
     string public completion_date;
     uint256 public phone;

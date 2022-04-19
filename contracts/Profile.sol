@@ -10,7 +10,7 @@ contract Profile {
     uint256[] public contracts;
     uint256 private length = 0;
     string public sector;
-    address public contractorAddress;
+    address private contractorAddress;
 
     constructor (string memory _name, string memory _gst, uint256 _phone, string memory _email, string memory _sector, address _address) public {
         name = _name;
