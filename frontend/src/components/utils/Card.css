@@ -1,14 +1,26 @@
 .card {
+    position: absolute;
+    z-index: 5;
     margin: auto;
-    padding: 3rem;
+    padding: 2rem;
     height: auto;
     justify-content: space-around;
     text-align: center;
+    border: 1px solid;
+}
+
+.right {
+    right: 4rem !important;
+    top: 7rem;
+}
+
+.left {
+    left: 4rem !important;
+    top: 7rem;
 }
 
 .elevation {
-    z-index: 2;
-    box-shadow: 2px;
+    box-shadow: 5px 10px #b6b4b4;
 }
 
 .black {
@@ -20,12 +32,11 @@
 }
 
 .small {
-    width: 15rem;
+    width: 20rem;
 }
 
 .large {
-    width: 40rem;
-
+    width: 50rem;
 }
 
 .card-div {

@@ -1,0 +1,10 @@
+.home-card-p {
+    font-size: 1rem;
+    color: red;
+}
+
+.home-card-img {
+    margin: auto;
+    height: 6rem;
+    width: 6rem;
+}

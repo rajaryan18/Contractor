@@ -1,17 +1,13 @@
-import React from 'react';
+import { useState } from 'react';
 import { configureStore } from '@reduxjs/toolkit';
-import detectEthereumProvider from '@metamask/detect-provider';
 
-const isMetaMask = async () => {
-    const provider = await detectEthereumProvider();
-    return !!provider;
-}
+const initial_State = '';
 
-const metamaskReducer = async (state, action) => {
+const metamaskReducer = async (state={initial_State}, action) => {
     switch(action.type) {
         case 'CONNECT':
-            await window.ethereum.enable();
-            return (typeof window.ethereum !== 'undefined' && isMetaMask());
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            return (typeof window.ethereum !== 'undefined');
         case 'ACCOUNT':
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             // state.account = accounts[0];
