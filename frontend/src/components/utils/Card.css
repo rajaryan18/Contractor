@@ -3,7 +3,7 @@
     z-index: 5;
     margin: auto;
     padding: 2rem;
-    height: auto;
+    height: fit-content;
     justify-content: space-around;
     text-align: center;
     border: 1px solid;

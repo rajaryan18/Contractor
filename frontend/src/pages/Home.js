@@ -4,27 +4,46 @@ import Card from '../components/utils/Card';
 import Button from '../components/utils/Button';
 import Modal from '../components/utils/Modal';
 import { store } from '../components/reducers/metamask-reducer';
+import { useEthers } from '@usedapp/core';
 
 import img from '../components/images/logo.jpg';
 import './Home.css';
 
-const Home = props => {
+const Home = () => {
+    const { account, activateBrowserWallet, chainId } = useEthers();
+
+    let message = "Login to your MetaMask account to continue";
 
     const [showMessage, setShowMessage] = useState(false);
-    const [account, setAccount] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [inCorrectPass, setInCorrectPass] = useState(false);
 
-    const setShowMessageHandler = () => setShowMessage(true);
     const setDontShowMessageHandler = () => setShowMessage(false);
-
+    const setShowMessageHandler = () => setShowMessage(true);
 
     useEffect(() => {
-        if(!store.dispatch({ type: 'CONNECT' })) {
-            let accounts = store.dispatch({ type: 'ACCOUNT' });
-            setAccount(accounts);
-            console.log(account);
-            setShowMessageHandler();
-        }
+        activateBrowserWallet();
     }, []);
+
+    const metamaskLoginFail = () => {
+        activateBrowserWallet();
+        if(!account) {
+            message = "An unexpected error with metamask has occured";
+        }
+    };
+
+    const onChangeHandler = e => {
+        setPassword(...password, e.target.value);
+    }
+
+    const onSubmitHandler = e => {
+        e.preventDefault();
+        store.dispatch({ type: 'ACCOUNT', payloaad: account });
+        store.dispatch({ type: 'CHAIN', payload: chainId });
+
+        setPassword(null);
+        // check whether password is correct or incorrect
+    };
 
     return (
         <React.Fragment>
@@ -32,21 +51,30 @@ const Home = props => {
                 show={showMessage}
                 onCancel={setDontShowMessageHandler}
                 header='MESSAGE'
-                footer={<Button onClick={setDontShowMessageHandler}>CLOSE</Button>}
+                footer={
+                    <div className='footer-button'>
+                        <Button onClick={metamaskLoginFail}>TRY AGAIN</Button>
+                        <Button onClick={setDontShowMessageHandler}>CLOSE</Button>
+                    </div>
+                }
             >
-                <p>Login to your MetaMask account to continue</p>
+                <p>{message}</p>
             </Modal>
             <div className='home-container'>
                 <Card elevation={true} size='small' bgcolor='white' position='right'>
                     <div className='card-div'>
                         <img src={img} alt='logo' className='home-card-img' />
                         <h1>CONTRACTOR</h1>
-                        <TextField label='Account' id='filled-basic' variant='filled' />
-                        <br />
-                        <TextField label='Password' id='filled-basic' variant='filled' />
-                        <br />
-                        <Button size='small' onClick={() => setShowMessageHandler()}>SUBMIT</Button>
-                        <p className='home-card-p'>Password did not match, please try again</p>
+                        <div className='home-card-div'>
+                            <form onSubmit={onSubmitHandler} submit='home-form'>
+                                <TextField label='Account' id='filled-basic' variant='filled' disabled value={account ? account : ''} className='home-form-text home-form-style' />
+                                <br />
+                                <TextField label='Password' id='filled-basic' variant='filled' type="password" name='password' value={password} onChange={onChangeHandler} className='home-form-text home-form-style' />
+                                <br /> <br />
+                                <Button type='submit' size='small' onClick={() => !account ? setShowMessageHandler() : console.log(account)} className='home-form-style'>SUBMIT</Button>
+                            </form>
+                        </div>
+                        {inCorrectPass && <p className='home-card-p'>Password did not match, please try again</p>}
                     </div>
                 </Card>
             </div>

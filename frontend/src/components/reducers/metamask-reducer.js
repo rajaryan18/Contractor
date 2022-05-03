@@ -1,23 +1,17 @@
-import { useState } from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 
-const initial_State = '';
-
-const metamaskReducer = async (state={initial_State}, action) => {
+const MetamaskReducer = (state={account: '', chain:''}, action) => {
     switch(action.type) {
-        case 'CONNECT':
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            return (typeof window.ethereum !== 'undefined');
         case 'ACCOUNT':
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            // state.account = accounts[0];
-            return accounts[0];
+            state.account = action.payload;
+            break;
         case 'CHAIN':
-            // state.chainID = window.ethereum.networkVersion;
-            return window.ethereum.networkVersion;
+            state.chain = action.payload;
+            break;
         default:
-            return false;
+            state.account = null;
+            state.chain = null;
     }
 };
 
-export const store = configureStore({ reducer: metamaskReducer });
+export const store = configureStore({ reducer: MetamaskReducer });
