@@ -1,0 +1,10 @@
+.header-container {
+    background: linear-gradient(90deg, rgba(2,0,36,1) 16%, rgba(9,9,121,1) 73%, rgba(3,152,215,1) 100%, rgba(0,212,255,1) 100%);
+    color: white;
+    font-size: 7rem;
+    padding: 3rem;
+    margin: 0px;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+}

@@ -1,25 +1,18 @@
-.home-card-p {
-    font-size: 1rem;
-    color: red;
+.home-container {
+    margin: -3px;
+    padding: 0px;
 }
 
-.home-card-img {
-    margin: auto;
-    height: 6rem;
-    width: 6rem;
+.home-body {
+    display: flex;
+    flex-direction: row;
+    margin: 0px;
 }
 
-.home-card-div {
-    margin-left: -5rem;
-    margin-right: -5rem;
+.new-contract-button {
+    display: flex;
+    flex-direction: row;
+    margin: 0px;
+    padding: 0px;
     justify-content: space-between;
-}
-
-.home-form-text {
-    width: 18rem;
-}
-
-.home-form-style {
-    margin-top: 3rem;
-    margin-bottom: 3rem;
 }

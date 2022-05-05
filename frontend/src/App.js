@@ -1,3 +1,4 @@
+import Auth from './pages/Auth';
 import Home from './pages/Home';
 import { DAppProvider, ChainId } from '@usedapp/core';
 

@@ -1,84 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { TextField } from '@mui/material';
-import Card from '../components/utils/Card';
+import React from 'react';
 import Button from '../components/utils/Button';
-import Modal from '../components/utils/Modal';
-import { store } from '../components/reducers/metamask-reducer';
-import { useEthers } from '@usedapp/core';
+import Header from './Header';
+import Card from '../components/utils/Card';
+import Contracts from '../components/divs/Contracts';
 
-import img from '../components/images/logo.jpg';
 import './Home.css';
 
 const Home = () => {
-    const { account, activateBrowserWallet, chainId } = useEthers();
-
-    let message = "Login to your MetaMask account to continue";
-
-    const [showMessage, setShowMessage] = useState(false);
-    const [password, setPassword] = useState(null);
-    const [inCorrectPass, setInCorrectPass] = useState(false);
-
-    const setDontShowMessageHandler = () => setShowMessage(false);
-    const setShowMessageHandler = () => setShowMessage(true);
-
-    useEffect(() => {
-        activateBrowserWallet();
-    }, []);
-
-    const metamaskLoginFail = () => {
-        activateBrowserWallet();
-        if(!account) {
-            message = "An unexpected error with metamask has occured";
-        }
-    };
-
-    const onChangeHandler = e => {
-        setPassword(...password, e.target.value);
-    }
-
-    const onSubmitHandler = e => {
-        e.preventDefault();
-        store.dispatch({ type: 'ACCOUNT', payloaad: account });
-        store.dispatch({ type: 'CHAIN', payload: chainId });
-
-        setPassword(null);
-        // check whether password is correct or incorrect
-    };
-
-    return (
-        <React.Fragment>
-            <Modal
-                show={showMessage}
-                onCancel={setDontShowMessageHandler}
-                header='MESSAGE'
-                footer={
-                    <div className='footer-button'>
-                        <Button onClick={metamaskLoginFail}>TRY AGAIN</Button>
-                        <Button onClick={setDontShowMessageHandler}>CLOSE</Button>
+    return(
+        <div className='home-continer'>
+            <Header />
+            <div className='home-body'>
+                <Card elevation='complete' bgcolor='white' size='large'>
+                    <div className='new-contract-button'>
+                        <Button size='big' invese>Profile</Button>
+                        <Button size='big' inverse > + New Contract</Button>
                     </div>
-                }
-            >
-                <p>{message}</p>
-            </Modal>
-            <div className='home-container'>
-                <Card elevation={true} size='small' bgcolor='white' position='right'>
-                    <div className='card-div'>
-                        <img src={img} alt='logo' className='home-card-img' />
-                        <h1>CONTRACTOR</h1>
-                        <div className='home-card-div'>
-                            <form onSubmit={onSubmitHandler} submit='home-form'>
-                                <TextField label='Account' id='filled-basic' variant='filled' disabled value={account ? account : ''} className='home-form-text home-form-style' />
-                                <br />
-                                <TextField label='Password' id='filled-basic' variant='filled' type="password" name='password' value={password} onChange={onChangeHandler} className='home-form-text home-form-style' />
-                                <br /> <br />
-                                <Button type='submit' size='small' onClick={() => !account ? setShowMessageHandler() : console.log(account)} className='home-form-style'>SUBMIT</Button>
-                            </form>
-                        </div>
-                        {inCorrectPass && <p className='home-card-p'>Password did not match, please try again</p>}
-                    </div>
+                    <Contracts />
                 </Card>
+                <Card elevation='complete' bgcolor='white' size='medium'>
+                    <h2 className='home-news-h2'>NEWS</h2>
+                    <hr id='home-news-hr' />
+                </Card>                
             </div>
-        </React.Fragment>
+        </div>
     );
 };
 

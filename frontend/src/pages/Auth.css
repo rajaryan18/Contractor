@@ -1,0 +1,25 @@
+.auth-card-p {
+    font-size: 1rem;
+    color: red;
+}
+
+.auth-card-img {
+    margin: auto;
+    height: 6rem;
+    width: 6rem;
+}
+
+.auth-card-div {
+    margin-left: -5rem;
+    margin-right: -5rem;
+    justify-content: space-between;
+}
+
+.auth-form-text {
+    width: 18rem;
+}
+
+.auth-form-style {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
