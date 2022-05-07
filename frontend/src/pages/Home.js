@@ -13,7 +13,7 @@ const Home = () => {
             <div className='home-body'>
                 <Card elevation='complete' bgcolor='white' size='large'>
                     <div className='new-contract-button'>
-                        <Button size='big' invese>Profile</Button>
+                        <Button size='big' inverse>Profile</Button>
                         <Button size='big' inverse > + New Contract</Button>
                     </div>
                     <Contracts />

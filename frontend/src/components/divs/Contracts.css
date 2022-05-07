@@ -12,23 +12,49 @@
 }
 
 .contracts-search {
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    margin: auto;
+}
+
+.contracts-search-input {
     border: solid 1px black;
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
     border-bottom-right-radius: 1rem;
     border-bottom-left-radius: 1rem;
-    width: 18rem;
+    width: 30rem;
     height: 2rem;
-    padding: 6px;
-    margin: 1rem;   
+    margin: 1rem;
+    margin-right: 2.5rem;
+    padding-left: 1rem;
 }
 
-.contracts-search-input {
-    border: 0px;
-    width: 20rem;
-    height: 2rem;
+.contracts-search-button {
+    width: 2rem;
+    margin-top: 1rem;
 }
 
-.contracts-search-input:focus {
-    outline: 0px;
+.contracts-table-th {
+    font-size: 1.3rem;
+}
+
+.contracts-table-tr {
+    line-height: 2rem;
+}
+
+.contracts-table {
+    width: 45rem;
+    justify-content: space-between;
+}
+
+.contracts-table-td-button {
+    height: 2rem;
+    padding: 0.3rem;
+    margin: auto;
+}
+
+td {
+    max-width: 17rem;
 }
