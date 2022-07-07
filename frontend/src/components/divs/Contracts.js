@@ -1,30 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../utils/Button';
 import Contract from './Contract';
 import './Contracts.css';
-
-const ct = [
-    {
-        serial: 2444,
-        name: 'Road Construction',
-        org: 'Reliance Pvt Lmt',
-        date: '11/11/22'
-    },
-    {
-        serial: 2445,
-        name: 'Road Construction',
-        org: 'Reliance Pvt Lmt',
-        date: '11/11/22'
-    },
-];
+import { ethers } from 'ethers';
+import profile from '../../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
+import contract from '../../chain-info/deployments/42/0x1B8d9C22aF345278f923efba04cFb88563f1D5b9.json';
 
 const Contracts = () => {
+    const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
+    const contractAddress = '0x1B8d9C22aF345278f923efba04cFb88563f1D5b9';
+    const [contracts, setContracts] = useState();
+    const [account, setAccount] = useState();
     const [search, setSearch] = useState(null);
     const [modal, setModal] = useState(false);
     const [id, setId] = useState(null);
 
+    useEffect(() => {
+        const getAccount = async () => {
+            if(window.ethereum) {
+                try {
+                    if(!account) {  
+                        let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        setAccount(accounts[0]);
+                    }
+                } catch (err) {
+                    console.log("err");
+                }
+            }
+        };
+
+        const getContracts = async () => {
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                // get all contract IDs
+                const profileContract = new ethers.Contract(profileAddress, profile.abi, signer);
+                let p_txn = await profileContract.getContracts(account);
+                console.log(p_txn);
+
+                const contractContract = new ethers.Contract(contractAddress, contract.abi, signer);
+                let c_txn = await p_txn.map(p => {
+                    contractContract.fullContract(p);
+                });
+                console.log(c_txn);
+                setContracts(c_txn);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        getAccount();
+        getContracts();
+    }, []);
+
     const setOpenModal = () => setModal(true);
     const setCloseModal = () => setModal(false);
+
+    const buttonClick = (id) => {
+        setId(id); 
+        setOpenModal();
+    };
 
     const onChangeHandler = e => {
         setSearch(...search, e.target.value);
@@ -54,26 +89,33 @@ const Contracts = () => {
                 </div>
             </form>
             <table border='0' className='contracts-table'>
-                    <th className='contracts-table-th'>ID</th>
-                    <th className='contracts-table-th'>Contract Name</th>
-                    <th className='contracts-table-th'>Email</th>
-                    <th className='contracts-table-th'>Due Date</th>
-                    {ct.map(c => {
+                    <tr>
+                        <th className='contracts-table-th'>ID</th>
+                        <th className='contracts-table-th'>Contract Name</th>
+                        <th className='contracts-table-th'>Email</th>
+                        <th className='contracts-table-th'>Due Date</th>
+                    </tr>
+                    {contracts && contracts.map(c => {
                         return (
                             <>
                                 <tr className='contracts-table-tr'>
-                                    <td>{c.serial}</td>
-                                    <td>{c.name}</td>
-                                    <td>{c.email}</td>
-                                    <td>{c.date}</td>
+                                    <td>{c[0]}</td>
+                                    <td>{c[1]}</td>
+                                    <td>{c[7]}</td>
+                                    <td>{c[5]}</td>
                                     <td className='contracts-table-td-button'>
-                                        <Button size='small' onClick={() => {setId(c.serial); setOpenModal;}}>Details</Button>
+                                        <Button size='small' onClick={buttonClick(c[0])}>Details</Button>
                                     </td>
                                 </tr>
                             </>
                         );
                     })}
             </table>
+            {!contracts &&
+                <div className='no-contract-div'>
+                    --No Contracts--
+                </div>
+            }
             <hr className='contracts-hr' />
         </div>
     );

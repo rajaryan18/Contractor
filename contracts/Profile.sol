@@ -3,40 +3,80 @@
 pragma solidity >=0.6.0 <0.9.0;
 
 contract Profile {
-    string public name;
-    string public GST;
-    uint256 public phone;
-    string public email;
-    uint256[] public contracts;
-    uint256 private length = 0;
-    string public sector;
-    address private contractorAddress;
-
-    constructor (string memory _name, string memory _gst, uint256 _phone, string memory _email, string memory _sector, address _address) public {
-        name = _name;
-        GST = _gst;
-        phone = _phone;
-        email = _email;
-        sector = _sector;
-        contractorAddress = _address;
+    struct Profiles {
+        string name;
+        string GST;
+        uint256 phone;
+        string email;
+        string sector;
+        address contractorAddress;
+        uint256[] contracts;
+        uint256 length;
     }
 
-    function addContract(uint256 _serial) public {
-        require(msg.sender == contractorAddress);
-        for(uint256 i=0;i<length;i++) {
-            if(contracts[i] == _serial) return;
+    Profiles[] public profile;
+    uint256 public count = 0;
+    
+    constructor () public {}
+
+    function createProfile(address _address, string memory _name, string memory _gst, uint256 _phone, string memory _email, string memory _sector) public {
+        Profiles memory p;
+        p.name = _name;
+        p.GST = _gst;
+        p.phone = _phone;
+        p.email = _email;
+        p.sector = _sector;
+        p.contractorAddress = _address;
+        p.length = 0;
+        profile.push(p);
+        count++;
+    }
+
+    function addContract(uint256 _id, address _address) public {
+        uint256 i=0;
+        for(i=0;i<count;i++) {
+            if(profile[i].contractorAddress == _address) {
+                profile[i].contracts.push(_id);
+                profile[i].length++;
+            }
         }
 
-        contracts.push(_serial);
+        require(i < count, "Address given does not exist");
     }
 
-    function getInfo() public view returns(string memory, string memory, uint256, string memory, string memory, address) {
+    function getInfo(address _address) public view returns(string memory, string memory, uint256, string memory, string memory) {
+        uint256 i=0;
+        Profiles memory p;
+        bool ans = false;
+        for(i=0;i<count;i++) {
+            if(profile[i].contractorAddress == _address) {
+                p = profile[i];
+                ans = true;
+                break;
+            }
+        }
+
+        require(ans == true, "Profile does not exist");
+
         return (
-            name, GST, phone, email, sector, contractorAddress
+            p.name, p.GST, p.phone, p.email, p.sector
         );
     }
 
-    function getContracts() public view returns(uint256[] memory) {
-        return contracts;
+    // Get all contract IDs of a specific address
+    function getContracts(address _address) public view returns(uint256[] memory) {
+        uint256[] memory c;
+        bool ans = false;
+        for(uint256 i=0;i<count;i++) {
+            if(profile[i].contractorAddress == _address) {
+                c = profile[i].contracts;
+                ans = true;
+                break;
+            }
+        }
+
+        require(ans == true, "No such profile");
+
+        return c;
     }
 }

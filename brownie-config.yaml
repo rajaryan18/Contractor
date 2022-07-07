@@ -6,8 +6,8 @@ compiler:
     remappings: 
       - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.2.1'
       - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.4.1'
-networks:
-  default: development
+network:
+  default: kovan
   development:
     keyhash: '0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311'
     fee: 100000000000000000
@@ -19,6 +19,15 @@ networks:
     fee: 100000000000000000
     verify: True
   kovan:
+    host: 'https://kovan.infura.io/v3/0e1704ef2122495bbe12277cce5e46c9'
+    vrf_coordinator: '0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9'
+    eth_usd_price_feed: '0x9326BFA02ADD2366b30bacB125260Af641031331'
+    link_token: '0xa36085F69e2889c224210F603D836748e7dC0088'
+    keyhash: '0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4'
+    fee: 100000000000000000
+    verify: True
+  kovanInfura:
+    host: 'https://kovan.infura.io/v3/0e1704ef2122495bbe12277cce5e46c9'
     vrf_coordinator: '0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9'
     eth_usd_price_feed: '0x9326BFA02ADD2366b30bacB125260Af641031331'
     link_token: '0xa36085F69e2889c224210F603D836748e7dC0088'

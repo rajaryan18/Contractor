@@ -3,25 +3,32 @@ import Button from '../components/utils/Button';
 import Header from './Header';
 import Card from '../components/utils/Card';
 import Contracts from '../components/divs/Contracts';
+import { useNotifications } from '@usedapp/core';
 
 import './Home.css';
 
 const Home = () => {
+    const { notifications } = useNotifications();
+
+    if(notifications.filter((notification) => notification.type === "transactionSucceed" && notification.transactionName === "Add Contract").length > 0) {
+        alert("Contract has been added!");
+    }
+
     return(
         <div className='home-continer'>
             <Header />
             <div className='home-body'>
                 <Card elevation='complete' bgcolor='white' size='large'>
                     <div className='new-contract-button'>
-                        <Button size='big' inverse>Profile</Button>
-                        <Button size='big' inverse > + New Contract</Button>
+                        <Button size='big' inverse to="/home/profile">PROFILE</Button>
+                        <Button size='big' inverse to="/home/contract"> + New Contract</Button>
                     </div>
                     <Contracts />
                 </Card>
                 <Card elevation='complete' bgcolor='white' size='medium'>
                     <h2 className='home-news-h2'>NEWS</h2>
                     <hr id='home-news-hr' />
-                </Card>                
+                </Card>
             </div>
         </div>
     );

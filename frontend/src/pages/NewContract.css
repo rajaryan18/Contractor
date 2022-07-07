@@ -1,0 +1,51 @@
+.new-contract-h1 {
+    margin: 0rem auto;
+    font-size: 5rem;
+    background: radial-gradient(black, darkblue);
+    color: white;
+    padding: 2rem;
+}
+
+.new-contract-div {
+    margin: 1rem;
+    font-size: 1.3rem;
+    display: flex;
+    justify-content: right;
+    align-content: right;
+    padding: 0.5rem;
+}
+
+.new-contract-label {
+    width: fill;
+    text-align: left !important;
+    font-weight: 600;
+    padding-right: 1rem;
+}
+
+.new-contract-input {
+    width: 17rem;
+    height: 2rem;
+    border-radius: 1.3rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.new-contract-textarea {
+    height: 5rem;
+    width: 20rem;
+    border-radius: 1rem;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+.new-contract-button-div {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.new-contract-form-div {
+    background: linear-gradient(lightblue, white);
+}

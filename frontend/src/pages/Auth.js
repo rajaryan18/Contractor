@@ -1,83 +1,137 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TextField } from '@mui/material';
 import Card from '../components/utils/Card';
 import Button from '../components/utils/Button';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../components/context/auth-context';
 import Modal from '../components/utils/Modal';
-import { store } from '../components/reducers/metamask-reducer';
-import { useEthers } from '@usedapp/core';
+import contract from '../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
+import { ethers } from 'ethers';
 
 import img from '../components/images/logo.jpg';
 import './Auth.css';
 
+const { ethereum } = window;
 const Auth = () => {
-    const { account, activateBrowserWallet, chainId } = useEthers();
+    const navigate = useNavigate();
+    const [account, setAccount] = useState();
+    const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
+    const [state, setState] = useState(false);
+    const [data, setData] = useState({
+        address: '',
+        name: '',
+        gst: '',
+        phone: '',
+        email: '',
+        sector: ''
+    });
 
-    let message = "Login to your MetaMask account to continue";
+    const { address, name, gst, phone, email, sector } = data;
 
-    const [showMessage, setShowMessage] = useState(false);
-    const [password, setPassword] = useState(null);
-    const [inCorrectPass, setInCorrectPass] = useState(false);
-
-    const setDontShowMessageHandler = () => setShowMessage(false);
-    const setShowMessageHandler = () => setShowMessage(true);
-
-    useEffect(() => {
-        activateBrowserWallet();
-    }, []);
-
-    const metamaskLoginFail = () => {
-        activateBrowserWallet();
-        if(!account) {
-            message = "An unexpected error with metamask has occured";
+    const connectWallet = async () => {
+        if(window.ethereum) {
+            try {
+                if(!account) {  
+                    let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    setAccount(accounts[0]);
+                }
+            } catch (err) {
+                console.log("err");
+            }
         }
-    };
-
-    const onChangeHandler = e => {
-        setPassword(...password, e.target.value);
     }
 
-    const onSubmitHandler = e => {
-        e.preventDefault();
-        store.dispatch({ type: 'ACCOUNT', payloaad: account });
-        store.dispatch({ type: 'CHAIN', payload: chainId });
+    const onSubmitHandler = async () => {
+        try {
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const signer = provider.getSigner();
+            const profileContract = new ethers.Contract(profileAddress, contract.abi, signer);
 
-        setPassword(null);
-        // check whether password is correct or incorrect
+            let ch_txn = await profileContract.getInfo(account);
+            console.log(ch_txn);
+            navigate('../home');
+        } catch (err) {
+            // New Profile must be created
+            setState(true);   
+        } 
     };
+
+    const onModalChange = e => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    }
+
+    const onModalSubmit = async event => {
+        setState(false);
+        event.preventDefault();
+        try {
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const signer = provider.getSigner();
+            const profileContract = new ethers.Contract(profileAddress, contract.abi, signer);
+
+            console.log("Initializing Profile Creation");
+            let txn = await profileContract.createProfile(account, name, gst, phone, email, sector);
+            txn.wait();
+            console.log(txn);
+            setData({
+                address: '',
+                name: '',
+                gst: '',
+                phone: '',
+                email: '',
+                sector: ''
+            });
+            navigate('../home');
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     return (
         <React.Fragment>
-            <Modal
-                show={showMessage}
-                onCancel={setDontShowMessageHandler}
-                header='MESSAGE'
-                footer={
-                    <div className='footer-button'>
-                        <Button onClick={metamaskLoginFail}>TRY AGAIN</Button>
-                        <Button onClick={setDontShowMessageHandler}>CLOSE</Button>
+            {state && <div>
+                <form onSubmit={onModalSubmit}>
+                    <div className='auth-modal-div'>
+                        <label className='auth-modal-label'>Organisation Name</label>
+                        <input type='text' required className='auth-modal-input' name='name' value={name} onChange={onModalChange} />
                     </div>
-                }
-            >
-                <p>{message}</p>
-            </Modal>
-            <div className='auth-container'>
+                    <div className='auth-modal-div'>
+                        <label className='auth-modal-label'>GST</label>
+                        <input type='text' required className='auth-modal-input' name='gst' value={gst} onChange={onModalChange} />
+                    </div>
+                    <div className='auth-modal-div'>
+                        <label className='auth-modal-label'>Contact Number</label>
+                        <input type='number' required className='auth-modal-input' name='phone' value={phone} onChange={onModalChange} />
+                    </div>
+                    <div className='auth-modal-div'>
+                        <label className='auth-modal-label'>Email</label>
+                        <input type='email' required className='auth-modal-input' name='email' value={email} onChange={onModalChange} />
+                    </div>
+                    <div className='auth-modal-div'>
+                        <label className='auth-modal-label'>Sector/Field of Work</label>
+                        <input type='text' required className='auth-modal-input' name='sector' value={sector} onChange={onModalChange} />
+                    </div>
+                    <Button type='submit' size='medium'>SUBMIT</Button>
+                </form>
+            </div>}
+
+            {!state && <div className='auth-container'>
                 <Card elevation='partial' size='small' bgcolor='white' position='right'>
                     <div className='card-div'>
                         <img src={img} alt='logo' className='home-card-img' />
                         <h1>CONTRACTOR</h1>
                         <div className='auth-card-div'>
-                            <form onSubmit={onSubmitHandler}>
-                                <TextField label='Account' id='filled-basic' variant='filled' disabled value={account ? account : ''} className='home-form-text home-form-style' />
-                                <br />
-                                <TextField label='Password' id='filled-basic' variant='filled' type="password" name='password' value={password} onChange={onChangeHandler} className='home-form-text home-form-style' />
-                                <br /> <br />
-                                <Button type='submit' size='small' onClick={() => !account ? setShowMessageHandler() : console.log(account)} className='home-form-style'>SUBMIT</Button>
-                            </form>
+                            
+                            {account && <TextField label='Account' id='filled-basic' variant='filled' disabled value={account ? account : ''} className='home-form-text home-form-style' />}
+                            <br /> <br />
+                            {/* <TextField label='Password' id='filled-basic' variant='filled' type="password" name='password' value={password} onChange={onChangeHandler} className='home-form-text home-form-style' />
+                            <br /> <br /> */}
+                            {!account && <Button size='medium' className='home-form-style' onClick={connectWallet}>GET ACCOUNT</Button>}
+                            {account && <Button onClick={onSubmitHandler} size='medium' className='home-form-style'>SUBMIT</Button>}
+                            
                         </div>
-                        {inCorrectPass && <p className='auth-card-p'>Password did not match, please try again</p>}
                     </div>
                 </Card>
-            </div>
+            </div>}
         </React.Fragment>
     );
 };

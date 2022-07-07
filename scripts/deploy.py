@@ -1,63 +1,33 @@
 from brownie import network, config, Contracts, Profile
 from scripts.helpful_scripts import get_account
+import time
+from web3 import Web3
 
 def create_contracts():
-    from_account = get_account(index=1)
-    to_account = get_account(index=2)
+    from_account = get_account()
 
-    contract = Contracts.deploy(
-        123,
-        'Great Indian Project',
-        to_account,
-        'A big bridge to be built with Rs 1.2Cr',
-        '22Apr22',
-        7259027418,
-        '18raj06@gmail.com',
-        '29AAHGVHGVG',
+    contracts = Contracts.deploy(
         {'from': from_account},
-        publish_source=config["networks"][network.show_active()].get("verify", False)
     )
-    return contract
+    time.sleep(1)
+    print(contracts)
+    return contracts
 
 def deploy_profile():
-    from_account = get_account(index=1)
+    from_account = get_account()
 
     profile = Profile.deploy(
-        'Credence',
-        '29AAJXDCGH',
-        7259027418,
-        '18raj06@gmail.com',
-        'Engineering',
-        from_account,
         {'from': from_account},
-        publish_source=config["networks"][network.show_active()].get("verify", False)
     )
+    time.sleep(1)
     print(profile)
     return profile
 
-def getContractProfile(profile):
-    print(profile.getContracts())
-
-def Increment():
-    account = get_account(index=1)
-    contract = Contracts[-1]
-    tx = contract.incrementContractState({'from': account})
-    tx.wait(1)
-    return contract
-
-def Decrement():
-    account = get_account(index=1)
-    contract = Contracts[-1]
-    tx = contract.decrementContractState({'from': account})
-    tx.wait(1)
-    return contract
-
-
 
 def main():
+    # w3 = Web3(Web3.HTTPProvider('https://kovan.infura.io/v3/0e1704ef2122495bbe12277cce5e46c9'))
+    # print(w3.isConnected())
+    network.web3.connect('https://kovan.infura.io/v3/0e1704ef2122495bbe12277cce5e46c9')
+    time.sleep(2)
     profile = deploy_profile()
     contract_info = create_contracts()
-    profile.addContract(contract_info[0])
-    getContractProfile(profile)
-    Increment()
-    Decrement()

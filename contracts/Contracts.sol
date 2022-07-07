@@ -2,64 +2,39 @@
 pragma solidity >=0.6.0 <0.9.0;
 
 contract Contracts {
-    uint256 public serial;
-    string public project_name;
-    string public client_GST;
-    address private to; // address of client
-    string public contract_detail;
-    string public completion_date;
-    uint256 public phone;
-    string public email;
-    enum CONTRACT_STATE { STARTING, MIDWAY, FINISHING }
-    CONTRACT_STATE public contract_state;
-
-    constructor (uint256 _serial, string memory _projectName, address _to, string memory _contractdetail, string memory _completeDate, uint256 _phone, string memory _email, string memory _gst) public {
-        project_name = _projectName;
-        to = _to;
-        contract_detail = _contractdetail;
-        completion_date = _completeDate;
-        client_GST = _gst;
-        phone = _phone;
-        email = _email;
-        serial = _serial;
-        contract_state = CONTRACT_STATE.STARTING;
+    struct Contractor {
+        string project_name;
+        string client_GST;
+        address to; // address of client
+        string contract_detail;
+        string completion_date;
+        uint256 phone;
+        string email;
     }
 
-    function incrementContractState() public {
-        require(contract_state != CONTRACT_STATE.FINISHING, "The contract has been completed");
+    Contractor[] public contractor;
+    uint256 count = 0;
+    mapping(uint256 => Contractor) contractMap;
 
-        if(contract_state == CONTRACT_STATE.STARTING) {
-            contract_state = CONTRACT_STATE.MIDWAY;
-        } else {
-            contract_state = CONTRACT_STATE.FINISHING;
-        }
+    constructor () public {}
+
+    function createContract(uint256 _id, string memory _name, string memory _gst, address _to, string memory _details, string memory _date, uint256 _phone, string memory _email) public {
+        Contractor memory c = Contractor(_name, _gst, _to, _details, _date, _phone, _email);
+        contractor.push(c);
+        count++;
+        contractMap[_id] = contractor[count-1];
     }
 
-    function decrementContractState() public {
-        require(contract_state != CONTRACT_STATE.STARTING, "The contract has just begun");
-        
-        if(contract_state == CONTRACT_STATE.FINISHING) {
-            contract_state = CONTRACT_STATE.MIDWAY;
-        } else {
-            contract_state = CONTRACT_STATE.STARTING;
-        }
-    }
-
-    function contractState() public view returns(string memory) {
-        if(contract_state == CONTRACT_STATE.STARTING) {
-            return "STARTING";
-        } else if(contract_state == CONTRACT_STATE.MIDWAY) {
-            return "MIDWAY";
-        } else {
-            return "FINISHING";
-        }
-    }
-
-    function fullContract() external view returns (
+    function fullContract(uint256 _id) external view returns (
         uint256, string memory, string memory, address, string memory, string memory, uint256, string memory
     ) {
+        Contractor memory c;
+        c = contractMap[_id];
+        
+        require(c.phone != 0, "No such contract exists");
+        
         return (
-            serial, project_name, client_GST, to, contract_detail, completion_date, phone, email
+            _id, c.project_name, c.client_GST, c.to, c.contract_detail, c.completion_date, c.phone, c.email
         );
     }
 }

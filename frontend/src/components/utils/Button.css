@@ -67,6 +67,10 @@
   font-size: 0.8rem;
 }
 
+.button--medium {
+  font-size: 1.2rem;
+}
+
 .button--big {
   font-size: 1.5rem;
 }
