@@ -9,7 +9,7 @@ import contract from '../../chain-info/deployments/42/0x1B8d9C22aF345278f923efba
 const Contracts = () => {
     const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
     const contractAddress = '0x1B8d9C22aF345278f923efba04cFb88563f1D5b9';
-    const [contracts, setContracts] = useState();
+    const [contracts, setContracts] = useState([]);
     const [account, setAccount] = useState();
     const [search, setSearch] = useState(null);
     const [modal, setModal] = useState(false);
@@ -22,6 +22,7 @@ const Contracts = () => {
                     if(!account) {  
                         let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                         setAccount(accounts[0]);
+                        console.log(accounts[0]);
                     }
                 } catch (err) {
                     console.log("err");
@@ -29,28 +30,26 @@ const Contracts = () => {
             }
         };
 
-        const getContracts = async () => {
-            try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                // get all contract IDs
-                const profileContract = new ethers.Contract(profileAddress, profile.abi, signer);
-                let p_txn = await profileContract.getContracts(account);
-                console.log(p_txn);
+        const getContract = async () => {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            // get all contract IDs
+            const profileContract = new ethers.Contract(profileAddress, profile.abi, signer);
+            let p_txn = await profileContract.getContracts(account);
+            console.log("ptxn", p_txn);
 
-                const contractContract = new ethers.Contract(contractAddress, contract.abi, signer);
-                let c_txn = await p_txn.map(p => {
-                    contractContract.fullContract(p);
-                });
-                console.log(c_txn);
-                setContracts(c_txn);
-            } catch (err) {
-                console.log(err);
-            }
+            const contractContract = new ethers.Contract(contractAddress, contract.abi, signer);
+            let c_txn = [];
+            await Promise.all(p_txn.map(async (p) => {
+                let c = await contractContract.fullContract(p);
+                c_txn.push(c);
+            }));
+            console.log("useEffect", c_txn);
+            setContracts(c_txn)
         };
 
         getAccount();
-        getContracts();
+        getContract();
     }, []);
 
     const setOpenModal = () => setModal(true);
@@ -95,7 +94,8 @@ const Contracts = () => {
                         <th className='contracts-table-th'>Email</th>
                         <th className='contracts-table-th'>Due Date</th>
                     </tr>
-                    {contracts && contracts.map(c => {
+                    {console.log(contracts)}
+                    {contracts.length > 0 && contracts.map(c => {
                         return (
                             <>
                                 <tr className='contracts-table-tr'>
@@ -111,7 +111,7 @@ const Contracts = () => {
                         );
                     })}
             </table>
-            {!contracts &&
+            {contracts.length == 0 &&
                 <div className='no-contract-div'>
                     --No Contracts--
                 </div>

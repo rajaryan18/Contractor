@@ -3,8 +3,6 @@ import { TextField } from '@mui/material';
 import Card from '../components/utils/Card';
 import Button from '../components/utils/Button';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../components/context/auth-context';
-import Modal from '../components/utils/Modal';
 import contract from '../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
 import { ethers } from 'ethers';
 
@@ -49,6 +47,7 @@ const Auth = () => {
 
             let ch_txn = await profileContract.getInfo(account);
             console.log(ch_txn);
+
             navigate('../home');
         } catch (err) {
             // New Profile must be created
@@ -69,9 +68,9 @@ const Auth = () => {
             const profileContract = new ethers.Contract(profileAddress, contract.abi, signer);
 
             console.log("Initializing Profile Creation");
-            let txn = await profileContract.createProfile(account, name, gst, phone, email, sector);
-            txn.wait();
-            console.log(txn);
+            let txn = await profileContract.createProfile(account, name, gst, Math.floor(phone/100), email, sector);
+            let receipt = txn.wait();
+            console.log(receipt);
             setData({
                 address: '',
                 name: '',

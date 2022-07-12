@@ -16,7 +16,7 @@ const Home = () => {
 
     return(
         <div className='home-continer'>
-            <Header />
+            <Header text="CONTRACTOR" />
             <div className='home-body'>
                 <Card elevation='complete' bgcolor='white' size='large'>
                     <div className='new-contract-button'>

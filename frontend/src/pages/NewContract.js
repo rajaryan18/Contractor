@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../components/utils/Button';
+import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 import contract from '../chain-info/deployments/42/0x1B8d9C22aF345278f923efba04cFb88563f1D5b9.json';
+import profile from '../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
 import { ethers } from 'ethers';
 import './NewContract.css';
 
 const NewContract = () => {
     const contractAddress = '0x1B8d9C22aF345278f923efba04cFb88563f1D5b9';
-    const id = Math.floor(new Date().getTime()/1000);
+    const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
+    const id = Math.floor(new Date().getTime()/100000);
+    console.log("id", id);
     const navigate = useNavigate();
+    const [account, setAccount] = useState();
     const [data, setData] = useState({
         projectName: '',
         gst: '',
@@ -19,17 +24,41 @@ const NewContract = () => {
         detail: ''
     });
 
+    useEffect(() => {
+        const getAccount = async () => {
+            if(window.ethereum) {
+                try {
+                    if(!account) {  
+                        let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        setAccount(accounts[0]);
+                    }
+                } catch (err) {
+                    console.log("err");
+                }
+            }
+        };
+
+        getAccount();
+    }, []);
+
     const { projectName, gst, to, date, phone, email, detail } = data;
 
-    const contractCreate = async (id, name, gst, to, details, date, phone, email) => {
+    const contractCreate = async (_id, _name, _gst, _to, _details, _date, _phone, _email) => {
         try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
 
             const contractContract = new ethers.Contract(contractAddress, contract.abi, signer);
-            let c_txn = await contractContract.createContract(id, name, gst, to, details, date, phone, email);
-            await c_txn.wait();
+            const c_txn = await contractContract.createContract(_id, _name, _gst, _to, _details, _date, Math.floor(_phone/100), _email);
+            console.log("Starting Transaction");
+            const receipt = await c_txn.wait();
             console.log(c_txn);
+            console.log(receipt);
+            console.log("Adding contract to profile contract");
+            const profileContract = new ethers.Contract(profileAddress, profile.abi, signer);
+            const p_txn = await profileContract.addContract(_id, account);
+            await p_txn.wait();
+            navigate('/home');
         } catch (err) {
             console.log(err);
         }
@@ -39,9 +68,9 @@ const NewContract = () => {
         setData({ ...data, [e.target.name]: e.target.value });
     }
 
-    const onContractSubmitHandler = (e) => {
+    const onContractSubmitHandler = async (e) => {
         e.preventDefault();
-        contractCreate(id, projectName, gst, to, detail, date, phone, email);
+        await contractCreate(id, projectName, gst, to, detail, date, phone, email);
         setData({
             projectName: '',
             gst: '',
@@ -52,12 +81,11 @@ const NewContract = () => {
             detail: ''
         });
         
-        navigate('/home');
     };
 
     return (
         <div className='new-contract-container'>
-            <h1 className='new-contract-h1 center'>New Contract</h1>
+            <Header text="NEW CONTRACT" />
             <div className='new-contract-form-div center'>
                 <form onSubmit={onContractSubmitHandler}>
                     <div className='new-contract-div'>
