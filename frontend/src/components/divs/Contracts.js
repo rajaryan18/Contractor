@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Button from '../utils/Button';
 import Contract from './Contract';
 import './Contracts.css';
 import { ethers } from 'ethers';
-import profile from '../../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
-import contract from '../../chain-info/deployments/42/0x1B8d9C22aF345278f923efba04cFb88563f1D5b9.json';
+import profile from '../../chain-info/deployments/42/0x2972A8DBd8914a2bd24d99402A66c74F74148348.json';
+import contract from '../../chain-info/deployments/42/0x7eED4c6135Ba416b774D01362272Fe6B30dc59e1.json';
 
 const Contracts = () => {
-    const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
-    const contractAddress = '0x1B8d9C22aF345278f923efba04cFb88563f1D5b9';
-    const [contracts, setContracts] = useState([]);
+    const profileAddress = '0x2972A8DBd8914a2bd24d99402A66c74F74148348';
+    const contractAddress = '0x7eED4c6135Ba416b774D01362272Fe6B30dc59e1';
+    // const [contracts, setContracts] = useState([]);
+    const contracts = useRef([]);
+    const [getContract, setGetContract] = useState();
     const [account, setAccount] = useState();
     const [search, setSearch] = useState(null);
     const [modal, setModal] = useState(false);
     const [id, setId] = useState(null);
 
     useEffect(() => {
+        console.log("Process initiated");
         const getAccount = async () => {
             if(window.ethereum) {
                 try {
@@ -31,6 +34,7 @@ const Contracts = () => {
         };
 
         const getContract = async () => {
+            console.log("Fetching contracts");
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             // get all contract IDs
@@ -44,13 +48,14 @@ const Contracts = () => {
                 let c = await contractContract.fullContract(p);
                 c_txn.push(c);
             }));
-            console.log("useEffect", c_txn);
-            setContracts(c_txn)
+            contracts.current = c_txn;
+            console.log("useEffect", contracts.current);
+            setGetContract(contracts.current);
         };
 
         getAccount();
         getContract();
-    }, []);
+    }, [account, contracts]);
 
     const setOpenModal = () => setModal(true);
     const setCloseModal = () => setModal(false);
@@ -95,23 +100,23 @@ const Contracts = () => {
                         <th className='contracts-table-th'>Due Date</th>
                     </tr>
                     {console.log(contracts)}
-                    {contracts.length > 0 && contracts.map(c => {
+                    {getContract && getContract.map(c => {
                         return (
                             <>
                                 <tr className='contracts-table-tr'>
-                                    <td>{c[0]}</td>
+                                    <td>{Math.floor(parseInt(c[0]._hex, 16)/1000)}</td>
                                     <td>{c[1]}</td>
                                     <td>{c[7]}</td>
                                     <td>{c[5]}</td>
                                     <td className='contracts-table-td-button'>
-                                        <Button size='small' onClick={buttonClick(c[0])}>Details</Button>
+                                        <Button size='small' onClick={() => buttonClick(Math.floor(parseInt(c[0]._hex, 16)/1000))}>Details</Button>
                                     </td>
                                 </tr>
                             </>
                         );
                     })}
             </table>
-            {contracts.length == 0 &&
+            {!getContract &&
                 <div className='no-contract-div'>
                     --No Contracts--
                 </div>

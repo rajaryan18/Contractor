@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 import Card from '../components/utils/Card';
 import Button from '../components/utils/Button';
 import { useNavigate } from 'react-router-dom';
-import contract from '../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
+import contract from '../chain-info/deployments/42/0x2972A8DBd8914a2bd24d99402A66c74F74148348.json';
 import { ethers } from 'ethers';
 
 import img from '../components/images/logo.jpg';
@@ -13,7 +13,7 @@ const { ethereum } = window;
 const Auth = () => {
     const navigate = useNavigate();
     const [account, setAccount] = useState();
-    const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
+    const profileAddress = '0x2972A8DBd8914a2bd24d99402A66c74F74148348';
     const [state, setState] = useState(false);
     const [data, setData] = useState({
         address: '',
@@ -51,6 +51,7 @@ const Auth = () => {
             navigate('../home');
         } catch (err) {
             // New Profile must be created
+            console.log("Create new Profile");
             setState(true);   
         } 
     };
@@ -60,7 +61,6 @@ const Auth = () => {
     }
 
     const onModalSubmit = async event => {
-        setState(false);
         event.preventDefault();
         try {
             const provider = new ethers.providers.Web3Provider(ethereum);
@@ -68,7 +68,7 @@ const Auth = () => {
             const profileContract = new ethers.Contract(profileAddress, contract.abi, signer);
 
             console.log("Initializing Profile Creation");
-            let txn = await profileContract.createProfile(account, name, gst, Math.floor(phone/100), email, sector);
+            let txn = await profileContract.createProfile(account, name, gst, phone.toString(), email, sector);
             let receipt = txn.wait();
             console.log(receipt);
             setData({
@@ -79,6 +79,7 @@ const Auth = () => {
                 email: '',
                 sector: ''
             });
+            setState(false);
             navigate('../home');
         } catch (err) {
             console.log(err);
@@ -122,8 +123,6 @@ const Auth = () => {
                             
                             {account && <TextField label='Account' id='filled-basic' variant='filled' disabled value={account ? account : ''} className='home-form-text home-form-style' />}
                             <br /> <br />
-                            {/* <TextField label='Password' id='filled-basic' variant='filled' type="password" name='password' value={password} onChange={onChangeHandler} className='home-form-text home-form-style' />
-                            <br /> <br /> */}
                             {!account && <Button size='medium' className='home-form-style' onClick={connectWallet}>GET ACCOUNT</Button>}
                             {account && <Button onClick={onSubmitHandler} size='medium' className='home-form-style'>SUBMIT</Button>}
                             

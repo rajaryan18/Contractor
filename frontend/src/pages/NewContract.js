@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Button from '../components/utils/Button';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
-import contract from '../chain-info/deployments/42/0x1B8d9C22aF345278f923efba04cFb88563f1D5b9.json';
-import profile from '../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
+import contract from '../chain-info/deployments/42/0x7eED4c6135Ba416b774D01362272Fe6B30dc59e1.json';
+import profile from '../chain-info/deployments/42/0x2972A8DBd8914a2bd24d99402A66c74F74148348.json';
 import { ethers } from 'ethers';
 import './NewContract.css';
 
 const NewContract = () => {
-    const contractAddress = '0x1B8d9C22aF345278f923efba04cFb88563f1D5b9';
-    const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
+    const contractAddress = '0x7eED4c6135Ba416b774D01362272Fe6B30dc59e1';
+    const profileAddress = '0x2972A8DBd8914a2bd24d99402A66c74F74148348';
     const id = Math.floor(new Date().getTime()/100000);
     console.log("id", id);
     const navigate = useNavigate();
@@ -49,15 +49,16 @@ const NewContract = () => {
             const signer = provider.getSigner();
 
             const contractContract = new ethers.Contract(contractAddress, contract.abi, signer);
-            const c_txn = await contractContract.createContract(_id, _name, _gst, _to, _details, _date, Math.floor(_phone/100), _email);
+            const c_txn = await contractContract.createContract(_id, _name, _gst, _to, _details, _date, _phone.toString(), _email);
             console.log("Starting Transaction");
             const receipt = await c_txn.wait();
-            console.log(c_txn);
-            console.log(receipt);
+            console.log("c_txn", c_txn);
+            console.log("receipt", receipt);
             console.log("Adding contract to profile contract");
             const profileContract = new ethers.Contract(profileAddress, profile.abi, signer);
             const p_txn = await profileContract.addContract(_id, account);
-            await p_txn.wait();
+            const rec = await p_txn.wait();
+            console.log("rec", rec);
             navigate('/home');
         } catch (err) {
             console.log(err);
@@ -70,7 +71,7 @@ const NewContract = () => {
 
     const onContractSubmitHandler = async (e) => {
         e.preventDefault();
-        await contractCreate(id, projectName, gst, to, detail, date, phone, email);
+        await contractCreate(id, projectName, gst, to, detail, date, phone.toString(), email);
         setData({
             projectName: '',
             gst: '',

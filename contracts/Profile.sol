@@ -6,7 +6,7 @@ contract Profile {
     struct Profiles {
         string name;
         string GST;
-        uint256 phone;
+        string phone;
         string email;
         string sector;
         address contractorAddress;
@@ -19,7 +19,7 @@ contract Profile {
     
     constructor () public {}
 
-    function createProfile(address _address, string memory _name, string memory _gst, uint256 _phone, string memory _email, string memory _sector) public {
+    function createProfile(address _address, string memory _name, string memory _gst, string memory _phone, string memory _email, string memory _sector) public {
         Profiles memory p;
         p.name = _name;
         p.GST = _gst;
@@ -38,13 +38,14 @@ contract Profile {
             if(profile[i].contractorAddress == _address) {
                 profile[i].contracts.push(_id);
                 profile[i].length++;
+                break;
             }
         }
 
         require(i < count, "Address given does not exist");
     }
 
-    function getInfo(address _address) public view returns(string memory, string memory, uint256, string memory, string memory) {
+    function getInfo(address _address) public view returns(string memory, string memory, string memory, string memory, string memory) {
         uint256 i=0;
         Profiles memory p;
         bool ans = false;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
-import contract from '../chain-info/deployments/42/0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8.json';
+import contract from '../chain-info/deployments/42/0x2972A8DBd8914a2bd24d99402A66c74F74148348.json';
 import { ethers } from 'ethers';
 import './Profile.css';
 
@@ -21,7 +21,7 @@ const Profile = () => {
                 }
             }
             if(account) {
-                const profileAddress = '0xA98EDEA1D3Ee569AC1f18c01Fef4595A9C8faCd8';
+                const profileAddress = '0x2972A8DBd8914a2bd24d99402A66c74F74148348';
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
                 const profileContract = new ethers.Contract(profileAddress, contract.abi, signer);
