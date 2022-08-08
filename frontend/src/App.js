@@ -5,9 +5,7 @@ import {
   Routes,
   NavLink
 } from 'react-router-dom';
-import { DAppProvider, ChainId, Kovan } from '@usedapp/core';
-import { useAccount } from './components/hooks/useContract';
-import { AuthContext } from './components/context/auth-context';
+// import { DAppProvider, ChainId, Kovan } from '@usedapp/core';
 
 import Auth from './pages/Auth';
 import Home from './pages/Home';

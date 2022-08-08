@@ -3,16 +3,15 @@ import Button from '../components/utils/Button';
 import Header from './Header';
 import Card from '../components/utils/Card';
 import Contracts from '../components/divs/Contracts';
-import { useNotifications } from '@usedapp/core';
 
 import './Home.css';
 
 const Home = () => {
-    const { notifications } = useNotifications();
+    // const { notifications } = useNotifications();
 
-    if(notifications.filter((notification) => notification.type === "transactionSucceed" && notification.transactionName === "Add Contract").length > 0) {
-        alert("Contract has been added!");
-    }
+    // if(notifications.filter((notification) => notification.type === "transactionSucceed" && notification.transactionName === "Add Contract").length > 0) {
+    //     alert("Contract has been added!");
+    // }
 
     return(
         <div className='home-continer'>

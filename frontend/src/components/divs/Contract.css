@@ -1,8 +1,8 @@
 .contract-container {
     border: 1px solid black;
     z-index: 5;
-    max-height: 50rem;
-    width: 70rem;
+    max-height: 60vh;
+    width: 70vw;
     margin: auto;
     padding: 2rem;
 }

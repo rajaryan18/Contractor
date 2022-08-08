@@ -88,7 +88,7 @@ const Auth = () => {
 
     return (
         <React.Fragment>
-            {state && <div>
+            {state && <div style={{ display: 'flex', 'flex-direction': 'column', margin: '0 auto', width: '23rem' }}><Button inverse onClick={() => setState(false)}>Back</Button>
                 <form onSubmit={onModalSubmit}>
                     <div className='auth-modal-div'>
                         <label className='auth-modal-label'>Organisation Name</label>
@@ -110,7 +110,7 @@ const Auth = () => {
                         <label className='auth-modal-label'>Sector/Field of Work</label>
                         <input type='text' required className='auth-modal-input' name='sector' value={sector} onChange={onModalChange} />
                     </div>
-                    <Button type='submit' size='medium'>SUBMIT</Button>
+                    <section style={{  }}><Button type='submit' size='medium'>SUBMIT</Button></section>
                 </form>
             </div>}
 

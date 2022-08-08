@@ -23,3 +23,21 @@
     margin-top: 3rem;
     margin-bottom: 3rem;
 }
+
+/* .auth-modal-label {
+    width: 10rem;
+} */
+
+.auth-modal-div {
+    width: 20rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 1rem auto;
+}
+
+.auth-modal-div input {
+    width: 7rem;
+    height: 1.5rem;
+    border-radius: 7%;
+}

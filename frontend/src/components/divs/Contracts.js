@@ -14,7 +14,7 @@ const Contracts = () => {
     const [getContract, setGetContract] = useState();
     const [account, setAccount] = useState();
     const [search, setSearch] = useState(null);
-    const [modal, setModal] = useState(false);
+    const [modal, setModal] = useState(0);
     const [id, setId] = useState(null);
 
     useEffect(() => {
@@ -76,7 +76,7 @@ const Contracts = () => {
     return (
         <div className='contracts-container'>
             {modal && 
-                <Contract serial={id} >
+                <Contract data={getContract[modal-1]} >
                     <div className='contract-footer'>
                         <Button onClick={setCloseModal} size='small'>CLOSE</Button>
                     </div>
@@ -100,7 +100,7 @@ const Contracts = () => {
                         <th className='contracts-table-th'>Due Date</th>
                     </tr>
                     {console.log(contracts)}
-                    {getContract && getContract.map(c => {
+                    {getContract && getContract.map((c,index) => {
                         return (
                             <>
                                 <tr className='contracts-table-tr'>
@@ -109,7 +109,7 @@ const Contracts = () => {
                                     <td>{c[7]}</td>
                                     <td>{c[5]}</td>
                                     <td className='contracts-table-td-button'>
-                                        <Button size='small' onClick={() => buttonClick(Math.floor(parseInt(c[0]._hex, 16)/1000))}>Details</Button>
+                                        <Button size='small' onClick={() => setModal(index+1)}>Details</Button>
                                     </td>
                                 </tr>
                             </>
